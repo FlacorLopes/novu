@@ -1,17 +1,12 @@
-import { MouseEventHandler } from 'react';
 import { FC } from 'react';
-import { Button, IconLockPerson } from '@novu/design-system';
 import { useAuthContext } from '../../../components/providers/AuthProvider';
 import { css } from '../../../styled-system/css';
 import { styled } from '../../../styled-system/jsx';
 import { title } from '../../../styled-system/recipes';
 import { InputPlain } from '../components';
 import { SettingsPageContainer } from '../SettingsPageContainer';
-import { UserProfilePasswordSidebar } from './UserProfilePasswordSidebar';
-import { UserProfileSidebarTypeEnum } from './UserProfilePasswordSidebarEnum';
-import { useUserProfileSearchParams } from './useUserProfileSearchParams';
-import { useUserProfileSetPassword } from './useUserProfileSetPassword';
-import { UserProfileFlow } from './UserProfileFlow.const';
+import { UserProfileSidebarContextProvider } from './UserProfileSidebarContext';
+import { UserProfileSidebarControl } from './UserProfileSidebarControl';
 
 const Title = styled('h2', title);
 
@@ -20,18 +15,7 @@ const inputStyles = css({ minWidth: '18.75rem' });
 export const UserProfilePage: FC = () => {
   const { currentUser } = useAuthContext();
 
-  const { sidebarType, updateSidebarParam, token } = useUserProfileSearchParams();
-
-  const closeSidebar = () => {
-    updateSidebarParam(null);
-  };
-
-  const { handleSendLinkEmail, countdownTimerSeconds, email } = useUserProfileSetPassword();
-
-  const handleSetPasswordClick: MouseEventHandler<HTMLButtonElement> = async () => {
-    handleSendLinkEmail();
-    updateSidebarParam(UserProfileSidebarTypeEnum.PASSWORD);
-  };
+  const email = currentUser?.email ?? '';
 
   return (
     <SettingsPageContainer title="User profile">
@@ -43,7 +27,7 @@ export const UserProfilePage: FC = () => {
           className={inputStyles}
           type="text"
           label="Email address"
-          value={currentUser?.email ?? ''}
+          value={email}
           autoCorrect="none"
           aria-autocomplete="none"
           autoComplete="none"
@@ -60,21 +44,11 @@ export const UserProfilePage: FC = () => {
             autoComplete="none"
             readOnly
           />
-          <Button variant="outline" className={css({ color: '' })} onClick={handleSetPasswordClick}>
-            <IconLockPerson className={css({ color: 'button.text.outline !important' })} />
-            {currentUser?.hasPassword ? 'Update password' : 'Set password'}
-          </Button>
+          <UserProfileSidebarContextProvider>
+            <UserProfileSidebarControl />
+          </UserProfileSidebarContextProvider>
         </div>
       </div>
-      <UserProfilePasswordSidebar
-        isOpened={!!sidebarType}
-        onClose={closeSidebar}
-        countdownTimerSeconds={countdownTimerSeconds}
-        handleSendLinkEmail={handleSendLinkEmail}
-        email={email}
-        token={token ?? undefined}
-        hasPassword={!!currentUser?.hasPassword}
-      />
     </SettingsPageContainer>
   );
 };
