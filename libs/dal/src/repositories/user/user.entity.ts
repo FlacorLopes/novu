@@ -40,6 +40,8 @@ export class UserEntity implements IUserEntity {
   @Exclude({ toPlainOnly: true })
   password?: string;
 
+  hasPassword: boolean;
+
   createdAt: string;
 
   showOnBoarding?: boolean;
