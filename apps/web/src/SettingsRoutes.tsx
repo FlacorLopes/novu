@@ -8,6 +8,7 @@ import { BillingRoutes } from './pages/BillingPages';
 import { BrandingForm } from './pages/brand/tabs';
 import { MembersInvitePage as MembersInvitePageNew } from './pages/invites/v2/MembersInvitePage';
 import { ApiKeysPage } from './pages/settings';
+import { OrganizationPage } from './pages/settings/organization';
 import { SettingsPage } from './pages/settings/SettingsPage';
 import { ApiKeysCard } from './pages/settings/tabs';
 import { EmailSettings } from './pages/settings/tabs/EmailSettings';
@@ -31,7 +32,7 @@ export const useSettingsRoutes = () => {
         <Route path={ROUTES.PROFILE} element={<ApiKeysCard />} />
         <Route path={ROUTES.BRAND_SETTINGS} element={<BrandingForm />} />
         {/* TODO: replace with actual component */}
-        <Route path={ROUTES.ORGANIZATION} element={<ApiKeysCard />} />
+        <Route path={ROUTES.ORGANIZATION} element={<OrganizationPage />} />
         <Route path={ROUTES.TEAM_SETTINGS} element={<MembersInvitePageNew />} />
         <Route path={ROUTES.BILLING} element={<BillingRoutes />} />
         <Route path={ROUTES.WEBHOOK} element={<EmailSettings />} />
