@@ -15,9 +15,9 @@ type UserProfileUpdatePasswordFormProps = {
 };
 
 interface IPasswordUpdateData {
-  passwordCurrent: string;
-  passwordNew: string;
-  passwordRepeat: string;
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
 }
 
 export const UserProfileUpdatePasswordForm: React.FC<UserProfileUpdatePasswordFormProps> = ({ onSuccess }) => {
@@ -37,15 +37,15 @@ export const UserProfileUpdatePasswordForm: React.FC<UserProfileUpdatePasswordFo
     setError,
   } = useForm({
     defaultValues: {
-      passwordCurrent: '',
-      passwordNew: '',
-      passwordRepeat: '',
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: '',
     },
   });
 
   const onSubmitPasswords = async (data: IPasswordUpdateData) => {
-    if (data.passwordNew !== data.passwordRepeat) {
-      setError('passwordRepeat', { message: 'Passwords do not match' });
+    if (data.newPassword !== data.confirmPassword) {
+      setError('confirmPassword', { message: 'Passwords do not match' });
 
       return;
     }
@@ -83,8 +83,8 @@ export const UserProfileUpdatePasswordForm: React.FC<UserProfileUpdatePasswordFo
     <form noValidate name="reset-form" onSubmit={handleSubmit(onSubmitPasswords)}>
       <Stack direction={'column'} gap={'200'}>
         <PasswordInput
-          error={errors.passwordCurrent?.message}
-          {...register('passwordCurrent', {
+          error={errors.currentPassword?.message}
+          {...register('currentPassword', {
             ...SHARED_PASSWORD_INPUT_REGISTER_OPTIONS,
           })}
           required
@@ -92,10 +92,10 @@ export const UserProfileUpdatePasswordForm: React.FC<UserProfileUpdatePasswordFo
           placeholder="Enter current password"
           data-test-id="password-current"
         />
-        <PasswordRequirementPopover control={control}>
+        <PasswordRequirementPopover control={control} passwordInputName="newPassword">
           <PasswordInput
-            error={errors.passwordNew?.message}
-            {...register('passwordNew', {
+            error={errors.newPassword?.message}
+            {...register('newPassword', {
               ...SHARED_PASSWORD_INPUT_REGISTER_OPTIONS,
             })}
             required
@@ -105,8 +105,8 @@ export const UserProfileUpdatePasswordForm: React.FC<UserProfileUpdatePasswordFo
           />
         </PasswordRequirementPopover>
         <PasswordInput
-          error={errors.passwordRepeat?.message}
-          {...register('passwordRepeat', {
+          error={errors.confirmPassword?.message}
+          {...register('confirmPassword', {
             ...SHARED_PASSWORD_INPUT_REGISTER_OPTIONS,
           })}
           required
