@@ -110,9 +110,9 @@ export const UserProfileUpdatePasswordForm: React.FC<UserProfileUpdatePasswordFo
             ...SHARED_PASSWORD_INPUT_REGISTER_OPTIONS,
           })}
           required
-          label="Repeat Password"
+          label="Confirm Password"
           placeholder="Type it again"
-          data-test-id="password-repeat"
+          data-test-id="password-confirm"
         />
         <Button
           icon={<IconOutlineLockPerson color="typography.text.main" />}
