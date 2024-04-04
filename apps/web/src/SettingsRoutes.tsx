@@ -12,6 +12,7 @@ import { OrganizationPage } from './pages/settings/organization';
 import { SettingsPage } from './pages/settings/SettingsPage';
 import { ApiKeysCard } from './pages/settings/tabs';
 import { EmailSettings } from './pages/settings/tabs/EmailSettings';
+import { SettingsPage as SettingsPageNew } from './pages/settings/v2/SettingsPage';
 
 /** Note: using a hook is the only way to separate routes */
 export const useSettingsRoutes = () => {
@@ -25,7 +26,7 @@ export const useSettingsRoutes = () => {
     <>
       <Route path={ROUTES.API_KEYS} element={<ApiKeysPage />} />
       {/* TODO: this should redirect to Profile */}
-      <Route path={ROUTES.SETTINGS} element={<SettingsPage />}>
+      <Route path={ROUTES.SETTINGS} element={<SettingsPageNew />}>
         {/* TODO: replace with actual component */}
         <Route path={''} element={<ApiKeysCard />} />
         {/* TODO: replace with actual component */}
