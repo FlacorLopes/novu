@@ -1,7 +1,7 @@
 import { showNotification } from '@mantine/notifications';
 import { Button, IconOutlineLockPerson, PasswordInput } from '@novu/design-system';
 import { checkIsResponseError, IResponseError } from '@novu/shared';
-import { api, useAuthContext } from '@novu/shared-web';
+import { api } from '@novu/shared-web';
 import * as Sentry from '@sentry/react';
 import { useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
@@ -21,8 +21,6 @@ interface IPasswordUpdateData {
 }
 
 export const UserProfileUpdatePasswordForm: React.FC<UserProfileUpdatePasswordFormProps> = ({ onSuccess }) => {
-  const { setToken } = useAuthContext();
-
   const { isLoading, mutateAsync, error, isError } = useMutation<
     IPasswordUpdateData,
     IResponseError,
@@ -35,6 +33,7 @@ export const UserProfileUpdatePasswordForm: React.FC<UserProfileUpdatePasswordFo
     control,
     formState: { errors, isValid },
     setError,
+    reset,
   } = useForm({
     defaultValues: {
       currentPassword: '',
@@ -57,6 +56,7 @@ export const UserProfileUpdatePasswordForm: React.FC<UserProfileUpdatePasswordFo
         message: 'Password was set successfully',
         color: 'green',
       });
+      reset();
       onSuccess?.();
     } catch (err: unknown) {
       let errMessage = 'Error while setting password';
@@ -85,7 +85,7 @@ export const UserProfileUpdatePasswordForm: React.FC<UserProfileUpdatePasswordFo
         <PasswordInput
           error={errors.currentPassword?.message}
           {...register('currentPassword', {
-            ...SHARED_PASSWORD_INPUT_REGISTER_OPTIONS,
+            required: SHARED_PASSWORD_INPUT_REGISTER_OPTIONS.required,
           })}
           required
           label="Current Password"
