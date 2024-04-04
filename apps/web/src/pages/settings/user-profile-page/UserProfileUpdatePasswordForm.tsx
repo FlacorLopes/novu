@@ -10,22 +10,24 @@ import { Stack } from '../../../styled-system/jsx';
 import { PasswordRequirementPopover } from '../../auth/components/PasswordRequirementPopover';
 import { SHARED_PASSWORD_INPUT_REGISTER_OPTIONS } from './UserProfilePasswordSidebar.shared';
 
-type UserProfilePasswordFormProps = {
-  token: string;
+type UserProfileUpdatePasswordFormProps = {
   onSuccess?: () => void;
 };
 
-export const UserProfilePasswordForm: React.FC<UserProfilePasswordFormProps> = ({ token, onSuccess }) => {
+interface IPasswordUpdateData {
+  passwordCurrent: string;
+  passwordNew: string;
+  passwordRepeat: string;
+}
+
+export const UserProfileUpdatePasswordForm: React.FC<UserProfileUpdatePasswordFormProps> = ({ onSuccess }) => {
   const { setToken } = useAuthContext();
 
   const { isLoading, mutateAsync, error, isError } = useMutation<
-    { token: string },
+    IPasswordUpdateData,
     IResponseError,
-    {
-      password: string;
-      token: string;
-    }
-  >((data) => api.post(`/v1/auth/reset`, data));
+    IPasswordUpdateData
+  >((data) => api.post(`/v1/auth/update-password`, data));
 
   const {
     register,
@@ -35,27 +37,21 @@ export const UserProfilePasswordForm: React.FC<UserProfilePasswordFormProps> = (
     setError,
   } = useForm({
     defaultValues: {
-      password: '',
+      passwordCurrent: '',
+      passwordNew: '',
       passwordRepeat: '',
     },
   });
 
-  const onSubmitPasswords = async (data: { password: string; passwordRepeat: string }) => {
-    if (data.password !== data.passwordRepeat) {
+  const onSubmitPasswords = async (data: IPasswordUpdateData) => {
+    if (data.passwordNew !== data.passwordRepeat) {
       setError('passwordRepeat', { message: 'Passwords do not match' });
 
       return;
     }
 
-    const itemData = {
-      password: data.password,
-      token,
-    };
-
     try {
-      const response = await mutateAsync(itemData);
-
-      setToken(response.token);
+      await mutateAsync(data);
 
       showNotification({
         message: 'Password was set successfully',
@@ -86,16 +82,26 @@ export const UserProfilePasswordForm: React.FC<UserProfilePasswordFormProps> = (
   return (
     <form noValidate name="reset-form" onSubmit={handleSubmit(onSubmitPasswords)}>
       <Stack direction={'column'} gap={'200'}>
+        <PasswordInput
+          error={errors.passwordCurrent?.message}
+          {...register('passwordCurrent', {
+            ...SHARED_PASSWORD_INPUT_REGISTER_OPTIONS,
+          })}
+          required
+          label="Current Password"
+          placeholder="Enter current password"
+          data-test-id="password-current"
+        />
         <PasswordRequirementPopover control={control}>
           <PasswordInput
-            error={errors.password?.message}
-            {...register('password', {
+            error={errors.passwordNew?.message}
+            {...register('passwordNew', {
               ...SHARED_PASSWORD_INPUT_REGISTER_OPTIONS,
             })}
             required
             label="Password"
             placeholder="Type your new password"
-            data-test-id="password"
+            data-test-id="password-new"
           />
         </PasswordRequirementPopover>
         <PasswordInput
@@ -117,7 +123,7 @@ export const UserProfilePasswordForm: React.FC<UserProfilePasswordFormProps> = (
           data-test-id="submit-btn"
           className={css({ alignSelf: 'flex-end', width: 'fit-content !important' })}
         >
-          Set Password
+          Update Password
         </Button>
       </Stack>
       {isError && (
